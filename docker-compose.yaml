@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  jpetstore-account:
+    image: openjdk:8
+    container_name: account
+    environment:
+      - TZ=Asia/Seoul
+    ports:
+      - "8081:8080" 
+    volumes:
+      - ./account/target/:/usr/src/app
+    working_dir: /usr/src/app
+    command: "java -jar -Dserver.port=8080 -Dspring.profiles.active=prod account.jar"
+
+  jpetstore-common-db:
+    image: mariadb:10.5
+    container_name: jpetstore-db
+    environment:
+      TZ: "Asia/Seoul" 
+      MYSQL_ROOT_PASSWORD: "passmysql"
+      MYSQL_DATABASE: "jpetstore"
+      MYSQL_USER: "jpetstore"
+      MYSQL_PASSWORD: "jpetstore"
+    ports:
+      - "3306:3306" 
+    volumes:
+        - ./mysql/sql:/docker-entrypoint-initdb.d     
+        - ./mysql/data:/var/lib/mysql
+        - ./mysql/log:/var/log/mysql
+
